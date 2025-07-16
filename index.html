@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memorama App</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .botones {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .botones button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .botones button:hover {
+      background-color: #0056b3;
+    }
+
+    .contenedor-tabla {
+      max-width: 100%;
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .botones {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .botones button {
+        width: 90%;
+      }
+    }
+
+    #seccion-juego {
+      display: none;
+      text-align: center;
+      margin-top: 1rem;
+      gap: 1rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #seccion-juego button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      min-width: 150px;
+      transition: background-color 0.3s ease;
+    }
+
+    #seccion-juego a button {
+      background-color: green;
+    }
+
+    #seccion-juego a button:hover {
+      background-color: #006400;
+    }
+
+    #logout-btn {
+      background-color: #dc3545;
+    }
+
+    #logout-btn:hover {
+      background-color: #a71d2a;
+    }
+
+    @media (max-width: 600px) {
+      #seccion-juego {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #seccion-juego button,
+      #seccion-juego a button {
+        width: 90%;
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>¡Bienvenido a Memorama!</h1>
+
+  <div class="botones" id="botones-login-register">
+    <a href="register.html"><button>Registrarse</button></a>
+    <a href="login.html"><button>Iniciar Sesión</button></a>
+  </div>
+
+  <p style="text-align: center;">
+    <a href="https://www.youtube.com/watch?v=j3iCM3MfHY8&t=18s" target="_blank">
+      ▶️ Cómo jugar Memorama (ver tutorial)
+    </a>
+  </p>
+
+  <div id="seccion-juego">
+    <a href="game.html"><button>¡Jugar Memorama!</button></a>
+    <button id="logout-btn">Cerrar sesión</button>
+  </div>
+
+  <h2 style="margin-top: 2rem;">🏆 Top puntuaciones</h2>
+  <div class="contenedor-tabla">
+    <table>
+      <thead>
+        <tr>
+          <th>Jugador</th>
+          <th>Puntos</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-puntuaciones">
+        <!-- Se llenará desde JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function cargarPuntuaciones() {
+      fetch('http://localhost:3000/api/scores')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById('tabla-puntuaciones');
+          tbody.innerHTML = '';
+          data.forEach(score => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${score.nombre || 'Anónimo'}</td>
+              <td>${score.puntos}</td>
+              <td>${new Date(score.fecha).toLocaleDateString()}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .catch(err => {
+          console.error('Error al cargar puntuaciones:', err);
+        });
+    }
+
+    window.onload = () => {
+      const userId = localStorage.getItem('userId');
+      const botonesLoginRegister = document.getElementById('botones-login-register');
+      const seccionJuego = document.getElementById('seccion-juego');
+      const logoutBtn = document.getElementById('logout-btn');
+
+      if (userId) {
+        botonesLoginRegister.style.display = 'none';
+        seccionJuego.style.display = 'flex';
+      } else {
+        botonesLoginRegister.style.display = 'flex';
+        seccionJuego.style.display = 'none';
+      }
+
+      logoutBtn.onclick = () => {
+        localStorage.clear();
+        location.reload();
+      };
+
+      cargarPuntuaciones();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Iniciar sesión - Memorama</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1rem;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Iniciar sesión</h1>
+  <form id="form-login">
+    <input type="email" name="correo" placeholder="Correo electrónico" required />
+    <input type="password" name="contrasena" placeholder="Contraseña" required />
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p>¿No tienes cuenta? <a href="register.html">Regístrate</a></p>
+
+  <script>
+    const form = document.getElementById('form-login');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const correo = form.correo.value.trim();
+      const contrasena = form.contrasena.value.trim();
+
+      try {
+        const res = await fetch('http://localhost:3000/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ correo, contrasena })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.userId) {
+          // Guardar ID del usuario y nombre en localStorage
+          localStorage.setItem('userId', data.userId);
+          localStorage.setItem('userName', data.nombre);
+
+          alert('Inicio de sesión exitoso');
+          window.location.href = 'index.html';
+        } else {
+          // Mostrar mensaje de error enviado por backend o uno genérico
+          alert(data.error || 'Correo o contraseña incorrectos');
+        }
+      } catch (err) {
+        alert('Error al conectar con el servidor');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

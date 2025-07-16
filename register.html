@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro - Memorama</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1rem;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Crear cuenta</h1>
+  <form id="form-registro">
+    <input type="text" name="nombre" placeholder="Nombre completo" required />
+    <input type="email" name="correo" placeholder="Correo electrónico" required />
+    <input type="password" name="contrasena" placeholder="Contraseña" required />
+    <button type="submit">Registrarse</button>
+  </form>
+
+  <p>¿Ya tienes una cuenta? <a href="login.html">Inicia sesión</a></p>
+
+  <script>
+    const form = document.getElementById('form-registro');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nombre = form.nombre.value;
+      const correo = form.correo.value;
+      const contrasena = form.contrasena.value;
+
+      try {
+        const res = await fetch('http://localhost:3000/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nombre, correo, contrasena })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert('Registro exitoso. Ya puedes iniciar sesión.');
+          window.location.href = 'login.html';
+        } else {
+          alert(data.error || 'Error al registrarse');
+        }
+      } catch (err) {
+        alert('Error de conexión con el servidor');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
