@@ -10,7 +10,7 @@ window.onload = () => {
   // Cargar tabla de puntuaciones
   const tabla = document.getElementById('tabla-puntuaciones');
   if (tabla) {
-    fetch('http://localhost:3000/api/scores')
+    fetch('https://memorama-backend.onrender.com/api/scores')
       .then(res => res.json())
       .then(data => {
         data.forEach(row => {

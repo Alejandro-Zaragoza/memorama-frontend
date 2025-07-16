@@ -94,7 +94,7 @@ function manejarClickCarta(e) {
 }
 
 function guardarPuntuacion(puntos) {
-  fetch('http://localhost:3000/api/scores', {
+  fetch('https://memorama-backend.onrender.com/api/scores', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
